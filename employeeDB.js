@@ -29,7 +29,6 @@ const init = () => {
                 'Add Employee',
                 'Remove Employee',
                 'Update Employee Role',
-                'Update Employee Manager',
                 'EXIT'
             ],
         })
@@ -46,8 +45,6 @@ const init = () => {
                 removeEmployee();
             } else if (answers.menu === 'Update Employee Role') {
                 updateEmployeeRole();
-            } else if (answers.menu === 'Update Employee Manager') {
-                updateEmployeeManager();
             } else {
                 return;
             }
@@ -190,11 +187,74 @@ function updateEmployeeRole() {
             {
                 type: 'list',
                 message: 'Who would you like to update?',
-                name: 'update',
+                name: 'name',
                 choices: res.map(item => item.first_name)
-            }
+            },
+            {
+                type: 'list',
+                message: 'please select their new role',
+                name: 'update',
+                choices: [
+                    '1 - Sales Lead',
+                    '2 - Salesperson',
+                    '3 - Lead Engineer',
+                    '4 - Software Engineer',
+                    '5 - Account Manager',
+                    '6 - Legal Lead',
+                    '7 - Lawyer',
+                ]
+            },
+            {
+                type: 'list',
+                message: 'Who is their manager?',
+                name: 'manager',
+                choices: [
+                    'No one',
+                    '1 - Billy Baggins',
+                    '3 - Brandon Carter',
+                    '5 - Biggie Smalls',
+                    '6 - Mary Sue',
+                ]
+            },
         ]
         inquirer.prompt(updateE)
+            .then((data) => {
+                if (data.manager === 'No one') {
+                connection.query('UPDATE employees SET ? WHERE ?',
+                    [
+                        {
+                            role_id: parseInt(data.update),
+                        },
+                        {
+                            first_name: data.name,
+                        }
+
+                    ],
+                    (error) => {
+                        if (error) throw err;
+                        console.log('Employee Updated');
+                        init();
+                    }
+                )} else {
+                    connection.query('UPDATE employees SET ? WHERE ?',
+                    [
+                        {
+                            role_id: parseInt(data.update),
+                            manager_id: parseInt(data.manager),
+                        },
+                        {
+                            first_name: data.name,
+                        }
+
+                    ],
+                    (error) => {
+                        if (error) throw err;
+                        console.log('Employee Updated');
+                        init();
+                    }
+                )
+                }
+            })
     })
 }
 
