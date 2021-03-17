@@ -15,6 +15,8 @@ This app is designed to allow the user to keep track of their employees in a dat
 
 ![alt text](images/Screenshot%202021-03-17%20194337.png)
 
+click ![here](https://youtu.be/41bQhocMhtw) for the tutorial!
+
 ## Installation 
 _______________________________
 
