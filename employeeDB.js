@@ -67,6 +67,7 @@ function viewEmployeesDepartment() {
         console.log('/n');
         console.log('EMPLOYEES')
         console.table(res);
+        console.log('/n');
     })
     init();
 }
