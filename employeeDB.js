@@ -46,7 +46,7 @@ const init = () => {
                 removeEmployee();
             } else if (answers.menu === 'Update Employee Role') {
                 updateEmployeeRole();
-            } else if(answers.menu === 'Update Employee Manager') {
+            } else if (answers.menu === 'Update Employee Manager') {
                 updateEmployeeManager();
             } else {
                 return;
@@ -55,29 +55,148 @@ const init = () => {
 };
 
 function viewEmployees() {
-    connection.query(`SELECT employees.first_name, employees.last_name, roles.title, roles.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN department on department.id = roles.department_id LEFT JOIN employees e on employees.manager_id = e.id;`, (err, res) => {
+    connection.query(`SELECT employees.first_name, employees.last_name, roles.title, roles.salary, department.department_name, CONCAT(manager.first_name, ' ' ,manager.last_name) AS Manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN department on department.id = roles.department_id LEFT JOIN employees manager on employees.manager_id = manager.id;`, (err, res) => {
         if (err) throw err;
         console.log('/n');
         console.log('EMPLOYEES')
         console.table(res);
     })
-    // connection.query(`SELECT roles.id, roles.title, roles.salary FROM roles`, (err, res) => {
-    // if (err) throw err;
-    // console.log('Their info');
-    // console.table(res);
-    // })
-    // connection.query(`SELECT department.id, department.name FROM department`, (err, res) => {
-    //     if (err) throw err;
-    //     console.log('Their department');
-    //     console.table(res);
-    //     })
     init();
 };
 
 function viewEmployeesDepartment() {
-
+    connection.query(`SELECT employees.first_name, employees.last_name, department.department_name FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN department on department.id = roles.department_id`, (err, res) => {
+        if (err) throw err;
+        console.log('/n');
+        console.log('EMPLOYEES')
+        console.table(res);
+    })
+    init();
 }
 
+function viewEmployeesManager() {
+    connection.query(`SELECT employees.first_name, employees.last_name, CONCAT(manager.first_name, ' ' ,manager.last_name) AS Manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN department on department.id = roles.department_id LEFT JOIN employees manager on employees.manager_id = manager.id;`, (err, res) => {
+        if (err) throw err;
+        console.log('/n');
+        console.log('EMPLOYEES')
+        console.table(res);
+    })
+    init();
+}
+
+function addEmployee() {
+    const addE = [
+        {
+            type: 'input',
+            message: 'What is the first name of your employee?',
+            name: 'firstName'
+        },
+        {
+            type: 'input',
+            message: 'What is the last name of your employee?',
+            name: 'lastName'
+        },
+        {
+            type: 'list',
+            message: 'What is their role?',
+            name: 'role',
+            choices: [
+                '1 - Sales Lead',
+                '2 - Salesperson',
+                '3 - Lead Engineer',
+                '4 - Software Engineer',
+                '5 - Account Manager',
+                '6 - Legal Lead',
+                '7 - Lawyer',
+            ]
+        },
+        {
+            type: 'list',
+            message: 'Who is their manager?',
+            name: 'managerName',
+            choices: [
+                'No one',
+                '1 - Billy Baggins',
+                '3 - Brandon Carter',
+                '5 - Biggie Smalls',
+                '6 - Mary Sue',
+            ]
+        }
+    ]
+    inquirer.prompt(addE)
+        .then((data) => {
+            if (data.managerName === 'No one') {
+                const query = connection.query(
+                    'INSERT INTO employees SET ?',
+                    {
+                        first_name: data.firstName,
+                        last_name: data.lastName,
+                        role_id: parseInt(data.role),
+                    },
+                    (err, res) => {
+                        if (err) throw err;
+                        console.log('Employee Added!')
+                        init();
+                    }
+                )
+            } else {
+                const query = connection.query(
+                    'INSERT INTO employees SET ?',
+                    {
+                        first_name: data.firstName,
+                        last_name: data.lastName,
+                        role_id: parseInt(data.role),
+                        manager_id: parseInt(data.managerName)
+                    },
+                    (err, res) => {
+                        if (err) throw err;
+                        console.log('Employee Added!')
+                        init();
+                    }
+                )
+            }
+        })
+};
+
+function removeEmployee() {
+    connection.query('SELECT * FROM employees', (err, res) => {
+        if (err) throw err;
+        const removeE = [
+            {
+                type: 'list',
+                message: 'Who would you like to remove?',
+                name: 'removal',
+                choices: res.map(item => item.first_name)
+            }
+        ]
+        inquirer.prompt(removeE)
+            .then((data) => {
+                connection.query(`DELETE FROM employees WHERE ?`, {
+                    first_name: data.removal
+                },
+                    (err, res) => {
+                        console.log('Sorry to see them go');
+                        init();
+                    }
+                )
+            })
+    })
+};
+
+function updateEmployeeRole() {
+    connection.query('SELECT * FROM employees', (err, res) => {
+        if (err) throw err;
+        const updateE = [
+            {
+                type: 'list',
+                message: 'Who would you like to update?',
+                name: 'update',
+                choices: res.map(item => item.first_name)
+            }
+        ]
+        inquirer.prompt(updateE)
+    })
+}
 
 init();
 

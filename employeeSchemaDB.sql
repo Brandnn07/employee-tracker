@@ -4,7 +4,7 @@ CREATE DATABASE employee_DB;
 USE employee_DB;
 CREATE TABLE department(
   id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(45) NOT NULL,
+  department_name VARCHAR(45) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -28,30 +28,33 @@ FOREIGN KEY(role_id) REFERENCES roles(id),
 FOREIGN KEY(manager_id) REFERENCES employees(id)
 );
 
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES
-  ('Human Resorce'),
+  ('Human Resources'),
   ( 'Sales'),
   ('Legal'),
-  ('IT'),
-  ('Management');
+  ('IT');
 
 
  INSERT INTO roles ( title , salary , department_id )
 VALUES
- ('Sales Manager',3000,2),
-  ( 'Engineer',2500,4),
-  ('Lawyer',4000,3),
-  ('Project Manager',3500,4),
-  ('HR admin',2800,1);
+ ('Sales Lead', 9000, 2),
+  ('Salesperson', 6000, 2),
+  ('Lead Engineer', 9000, 4),
+  ('Software Engineer', 7500, 4),
+  ('Account Manager', 9500, 1),
+  ('Legal Lead', 9000, 3),
+  ('Lawyer', 8500, 3);
 
- INSERT INTO employees (  first_name, last_name, role_id ,manager_id) 
+ INSERT INTO employees (  first_name, last_name, role_id , manager_id) 
 VALUES
- ('Pedro','Perez',2,NULL),
- ('Mirta','Rodriguez',2,1),
- ('Abdul','Valdes',1,NULL),
- ('Lorenzo','Ascencion',3,NULL),
- ('Steve','Lee',4,NULL);
+ ('Billy', 'Baggins', 1, NULL),
+ ('Johnathan', 'Doe', 2, 1),
+ ('Brandon', 'Carter', 3, NULL),
+ ('Rando', 'Person', 4, 3),
+ ('Biggie', 'Smalls', 5, NULL),
+ ('Mary', 'Sue', 6, NULL),
+ ('Alex', 'Smith', 7, 6);
  
 SELECT * FROM department;
 SELECT * FROM roles;
