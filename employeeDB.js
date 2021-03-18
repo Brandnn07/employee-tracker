@@ -26,6 +26,7 @@ const init = () => {
                 'View All Employees',
                 'View All Employees By Department',
                 'View All Employees By Manager',
+                'View All Employees By Role',
                 'Add Employee',
                 'Remove Employee',
                 'Update Employee Role',
@@ -45,7 +46,10 @@ const init = () => {
                 removeEmployee();
             } else if (answers.menu === 'Update Employee Role') {
                 updateEmployeeRole();
-            } else {
+            } else if (answers.menu === 'View All Employees By Role') {
+                viewEmployeesRole();
+            }
+            else {
                 return;
             }
         })
@@ -62,7 +66,18 @@ function viewEmployees() {
 };
 
 function viewEmployeesDepartment() {
-    connection.query(`SELECT employees.first_name, employees.last_name, department.department_name FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN department on department.id = roles.department_id`, (err, res) => {
+    connection.query(`SELECT employees.first_name, employees.last_name, department.department_name FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN department on department.id = roles.department_id;`, (err, res) => {
+        if (err) throw err;
+        console.log('/n');
+        console.log('EMPLOYEES')
+        console.table(res);
+        console.log('/n');
+    })
+    init();
+}
+
+function viewEmployeesRole() {
+    connection.query(`SELECT employees.first_name, employees.last_name, roles.title FROM employees INNER JOIN roles on roles.id = employees.role_id;`, (err, res) => {
         if (err) throw err;
         console.log('/n');
         console.log('EMPLOYEES')
@@ -221,39 +236,40 @@ function updateEmployeeRole() {
         inquirer.prompt(updateE)
             .then((data) => {
                 if (data.manager === 'No one') {
-                connection.query('UPDATE employees SET ? WHERE ?',
-                    [
-                        {
-                            role_id: parseInt(data.update),
-                        },
-                        {
-                            first_name: data.name,
-                        }
-
-                    ],
-                    (error) => {
-                        if (error) throw err;
-                        console.log('Employee Updated');
-                        init();
-                    }
-                )} else {
                     connection.query('UPDATE employees SET ? WHERE ?',
-                    [
-                        {
-                            role_id: parseInt(data.update),
-                            manager_id: parseInt(data.manager),
-                        },
-                        {
-                            first_name: data.name,
-                        }
+                        [
+                            {
+                                role_id: parseInt(data.update),
+                            },
+                            {
+                                first_name: data.name,
+                            }
 
-                    ],
-                    (error) => {
-                        if (error) throw err;
-                        console.log('Employee Updated');
-                        init();
-                    }
-                )
+                        ],
+                        (error) => {
+                            if (error) throw err;
+                            console.log('Employee Updated');
+                            init();
+                        }
+                    )
+                } else {
+                    connection.query('UPDATE employees SET ? WHERE ?',
+                        [
+                            {
+                                role_id: parseInt(data.update),
+                                manager_id: parseInt(data.manager),
+                            },
+                            {
+                                first_name: data.name,
+                            }
+
+                        ],
+                        (error) => {
+                            if (error) throw err;
+                            console.log('Employee Updated');
+                            init();
+                        }
+                    )
                 }
             })
     })
