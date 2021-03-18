@@ -11,7 +11,7 @@ _______________________________
 
 This app is designed to allow the user to keep track of their employees in a database. They will be able to see their employees, the roles they partake, salaries etc and is able to adjust them at will. The information you input is automatically stored to a database so if the user makes any changes, for example adding an employee or removing one, it is updated in real time.
 
-![alt text](images/Screenshot%202021-03-17%20194301.png)
+![alt text](images/Screenshot%202021-03-17%20215216.png)
 
 ![alt text](images/Screenshot%202021-03-17%20194337.png)
 
